@@ -98,8 +98,13 @@ gh api \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   "/repos/$REPO/rulesets" \
-  --input - <<< "$RULESET_PAYLOAD"
+  --input - <<< "$RULESET_PAYLOAD" >/dev/null 2>/dev/null
 
-gh api --method PATCH /repos/$REPO -f allow_squash_merge=true -f allow_merge_commit=false -f allow_rebase_merge=false
+RULESET_PATCH_RESPONSE="$(gh api \
+  --method PATCH \
+  /repos/$REPO \
+  -f allow_squash_merge=true \
+  -f allow_merge_commit=false \
+  -f allow_rebase_merge=false 2>/dev/null)"
 
 echo "✓ Branch protection ruleset created successfully"
