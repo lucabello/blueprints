@@ -100,11 +100,4 @@ gh api \
   "/repos/$REPO/rulesets" \
   --input - <<< "$RULESET_PAYLOAD" >/dev/null 2>/dev/null
 
-RULESET_PATCH_RESPONSE="$(gh api \
-  --method PATCH \
-  /repos/$REPO \
-  -f allow_squash_merge=true \
-  -f allow_merge_commit=false \
-  -f allow_rebase_merge=false 2>/dev/null)"
-
 echo "✓ Branch protection ruleset created successfully"
