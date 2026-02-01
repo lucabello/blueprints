@@ -58,7 +58,7 @@ coverage:
 [group("dev")]
 venv:
     @echo "Activating virtual environment..."
-    @uv sync --all-groups
+    @uv sync --all-groups --all-extras
     @. .venv/bin/activate; exec "$SHELL" -i
 
 # ============================================================================
