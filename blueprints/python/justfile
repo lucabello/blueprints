@@ -86,7 +86,7 @@ clean:
 [confirm("Fetch the justfile from *lucabello/blueprints* ? (y/n):")]
 refresh:
     @echo "Fetching latest justfile from blueprints repository..."
-    curl -fsSL https://raw.githubusercontent.com/lucabello/blueprints/main/python/justfile -o justfile
+    curl -fsSL https://raw.githubusercontent.com/lucabello/blueprints/main/blueprints/python/justfile -o justfile
     @echo "✓ justfile updated"
 
 # Update uv.lock dependencies
