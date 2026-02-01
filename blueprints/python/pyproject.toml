@@ -52,5 +52,5 @@ convention = "google"
 skip = ".git,build,venv*"
 ignore-words-list = "assertIn"
 
-[tool.pytest.ini_options]
-addopts = "--cov=src --cov-report=term-missing"
+[tool.vulture]
+min_confidence = 80
