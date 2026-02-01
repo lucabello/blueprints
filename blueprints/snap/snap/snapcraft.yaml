@@ -1,0 +1,39 @@
+name: {{snap_name}}
+title: {{snap_title}}
+base: core24
+version: {{snap_version}}
+summary: {{snap_summary}}
+description: |
+  {{snap_description}}
+contact: {{author_email}}
+license: Apache-2.0
+donation:
+  - https://github.com/sponsors/casey
+  - https://ko-fi.com/lucabello
+issues:
+  - https://github.com/{{upstream_project}}/issues
+  - https://github.com/{{snap_repository}}/issues
+source-code:
+  - https://github.com/{{upstream_project}}
+website: {{upstream_website}}
+
+grade: devel  # grade: devel|stable  # Must be 'stable' to release into candidate/stable channels
+confinement: {{snap_confinement}}  # confinement: devmode|strict|classic
+
+platforms:
+  amd64:
+  arm64:
+    build-on: ["amd64", "arm64"]
+    build-for: ["arm64"]
+
+parts:
+  part_name:
+    plugin: {{snap_plugin}}
+    source: {{snap_source}}
+    source-tag: $SNAPCRAFT_PROJECT_VERSION
+
+apps:
+  app_name:
+    command: {{snap_command}} 
+    environment:
+      PATH: $SNAP/bin:$SNAP/usr/bin:$PATH

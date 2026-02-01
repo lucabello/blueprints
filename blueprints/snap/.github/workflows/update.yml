@@ -1,0 +1,91 @@
+name: Update from upstream
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'  # Runs at 06:00, on day 1 of the month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-release:
+    env:
+      SNAP_NAME: {{snap_name}}
+      UPSTREAM_REPO: {{upstream_repo}}
+      RELEASE_PREFIX: {{release_prefix}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get latest upstream release
+        id: upstream
+        run: |
+          LATEST_VERSION=$(gh release view --repo ${{ env.UPSTREAM_REPO }} --json tagName --jq '.tagName')
+          echo "version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Get current version
+        id: current
+        run: |
+          CURRENT_VERSION=$(grep '^version:' snap/snapcraft.yaml | awk '{print $2}')
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        id: compare
+        run: |
+          UPSTREAM_VERSION="${{ steps.upstream.outputs.version }}"
+          CURRENT_VERSION="${{ env.RELEASE_PREFIX }}${{ steps.current.outputs.version }}"
+          
+          echo "Upstream version: ${UPSTREAM_VERSION}"
+          echo "Current version: ${CURRENT_VERSION}"
+          
+          # Function to compare semantic versions
+          version_gt() {
+            # Returns 0 (true) if $1 > $2
+            test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1"
+          }
+          
+          if [ "${UPSTREAM_VERSION}" = "${CURRENT_VERSION}" ]; then
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "Already up to date"
+          elif version_gt "${UPSTREAM_VERSION}" "${CURRENT_VERSION}"; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "New version available: ${UPSTREAM_VERSION} > ${CURRENT_VERSION}"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "Upstream version ${UPSTREAM_VERSION} is not greater than current ${CURRENT_VERSION}, skipping"
+          fi
+
+      - name: Update snapcraft.yaml
+        if: steps.compare.outputs.needs_update == 'true'
+        run: |
+          UPSTREAM_VERSION="${{ steps.upstream.outputs.version }}"
+          # Remove prefix from version before setting in snapcraft.yaml
+          NEW_VERSION="${UPSTREAM_VERSION#${{ env.RELEASE_PREFIX }}}"
+          sed -i "s/^version:.*/version: ${NEW_VERSION}/" snap/snapcraft.yaml
+
+      - name: Create Pull Request
+        if: steps.compare.outputs.needs_update == 'true'
+        id: create_pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          commit-message: "chore: bump ${{ env.SNAP_NAME }} to ${{ steps.upstream.outputs.version }}"
+          title: "chore: bump ${{ env.SNAP_NAME }} to ${{ steps.upstream.outputs.version }}"
+          body: |
+            This PR updates `${{ env.SNAP_NAME }}` to version ${{ steps.upstream.outputs.version }}.
+            
+            **Changes:**
+            - Updated version in snap/snapcraft.yaml from ${{ steps.current.outputs.version }} to ${{ steps.upstream.outputs.version }}
+            
+            **Release notes:**
+            https://github.com/${{ env.UPSTREAM_REPO }}/releases/tag/${{ steps.upstream.outputs.version }}
+          branch: chore/bump-to-${{ steps.upstream.outputs.version }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated

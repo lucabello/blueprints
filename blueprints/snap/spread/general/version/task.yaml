@@ -1,0 +1,15 @@
+summary: Check the version output
+
+environment:
+  SNAP_VERSION: "$(sed -n 's/^version: //p' ${PROJECT_PATH}/snap/snapcraft.yaml)"
+
+execute: |
+  printenv
+  echo "+ Shell is $SHELL"
+  {{snap_command}} --version  # Make sure the command works
+  built_version="$(just --version)"
+  if [[ "just ${SNAP_VERSION}" != "$built_version" ]]; then
+    echo "The snap version differs from the built version!"
+    echo "snapcraft.yaml (${SNAP_VERSION}) != built version ($built_version)"
+    exit 1
+  fi
