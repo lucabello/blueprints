@@ -16,7 +16,7 @@ export UV_FROZEN := "true"
 # Run all quality checks
 [group("dev")]
 check: format lint test
-    @echo "✓ All checks passed!"
+    @echo; echo "✓ All checks passed!"
 
 # Format the codebase
 [group("dev")]
