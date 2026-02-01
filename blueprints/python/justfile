@@ -84,10 +84,10 @@ clean:
 # Update this justfile from the blueprint repository
 [group("maintenance")]
 [confirm("Fetch the justfile from *lucabello/blueprints* ? (y/n):")]
-refresh:
-    @echo "Fetching latest justfile from blueprints repository..."
-    curl -fsSL https://raw.githubusercontent.com/lucabello/blueprints/main/blueprints/python/justfile -o justfile
-    @echo "✓ justfile updated"
+@refresh:
+    echo "Fetching latest justfile from blueprints repository..."
+    gh api repos/lucabello/blueprints/contents/blueprints/python/justfile --jq '.content' | base64 --decode > justfile
+    echo "✓ justfile updated"
 
 # Update uv.lock dependencies
 [group("maintenance")]
