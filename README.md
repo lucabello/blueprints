@@ -39,6 +39,7 @@ Available recipes:
 
     [dev]
     check        # Run all quality checks
+    coverage     # Run tests with coverage information
     format       # Format the codebase
     lint         # Lint the codebase
     test         # Run tests
@@ -53,9 +54,17 @@ Available recipes:
     bump level   # Bump the version in pyproject.toml
     publish test # Publish to PyPI (requires authentication)
     release      # Create a GitHub release (which will trigger a PyPi release)
+
+For help with a specific recipe, run: just --usage <recipe>
 ```
 
 The template includes a pre-configured `pyproject.toml` with sensible defaults for the development tools.
+
+### Snap
+
+> Additional prerequisites: none
+
+A template to build snaps with `snapcraft`, including `spread` tests and automation for testing, building, releasing, and auto-updating the snap.
 
 ## License
 

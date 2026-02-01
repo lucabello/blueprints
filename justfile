@@ -10,7 +10,7 @@ set shell := ["bash", "-c"]
 # Use a blueprint to initialize a project
 [group("blueprints")]
 [arg("project_folder", long="project-folder", help="Path of the project to initialize")]
-[arg("blueprint", long="blueprint", pattern="^(python)$", help="Name of the blueprint")]
+[arg("blueprint", long="blueprint", pattern="^(python|snap)$", help="Name of the blueprint")]
 [confirm("Are you sure? This action cannot be undone (y/n):")]
 apply project_folder blueprint:
     #!/usr/bin/env bash
