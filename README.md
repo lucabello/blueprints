@@ -10,7 +10,7 @@ You can use this repository directly for your projects, or fork it and adapt it 
 
 ## Prerequisites
 
-- [just](https://github.com/casey/just) - command runner (required for all blueprints)
+- [just](https://github.com/casey/just)>=1.46.0 - command runner (required for all blueprints)
 
 ## Quick Start
 
