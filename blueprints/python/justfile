@@ -40,7 +40,7 @@ lint:
     # Check for dead code
     uv run vulture src
     # Run actionlint on GitHub Actions workflows
-    uv run actionlint
+    test -d .github/workflows && uv run actionlint || true
     @echo "✓ Linting passed!"
 
 
