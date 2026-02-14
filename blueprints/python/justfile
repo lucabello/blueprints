@@ -75,6 +75,8 @@ build:
 clean:
     # Remove __pycache__ directories
     find . -type d -name "__pycache__" -exec rm -r {} + || true
+    # Remove .ruff_cache directory
+    rm -rf .ruff_cache
     # Remove .pytest_cache directory
     rm -rf .pytest_cache
     # Remove build/dist/egg-info directories
